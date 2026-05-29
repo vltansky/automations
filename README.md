@@ -14,4 +14,4 @@ npx -y codex-automations add vltansky/automations --automation <id>
 
 | ID | Title | Description | Install | Source |
 |---|---|---|---|---|
-
+| `morning-pr-radar` | Morning PR Radar | Portable Codex automation package for Morning PR Radar. | `npx -y codex-automations add vltansky/automations --automation morning-pr-radar` | [automations/morning-pr-radar](./automations/morning-pr-radar) |

@@ -1,0 +1,61 @@
+version = 1
+id = "morning-pr-radar"
+kind = "cron"
+name = "Morning PR Radar"
+prompt = """Find all currently open GitHub pull requests authored by me across repositories I can access. Do not include PRs where I am only a reviewer, assignee, commenter, or otherwise involved but not the author.
+
+GitHub quota rules:
+- Treat GitHub GraphQL as scarce. At the start, run `gh api rate_limit --jq '.resources.graphql'` and include remaining/reset in the final report.
+- Do NOT use `gh pr list`, `gh pr view`, `gh search prs`, `gh api graphql`, or `viewer.pullRequests` for broad discovery. They can consume GraphQL quota even for small result sets.
+- Start with direct REST search only:
+  `gh api 'search/issues?q=author:vltansky+state:open+type:pr&per_page=100'`
+- Inspect only matched PRs. Use REST endpoints for details, files, statuses, and checks:
+  `/repos/{owner}/{repo}/pulls/{number}`
+  `/repos/{owner}/{repo}/pulls/{number}/files`
+  `/repos/{owner}/{repo}/commits/{sha}/check-runs`
+  `/repos/{owner}/{repo}/commits/{sha}/status`
+- Use GraphQL only for unresolved review threads after narrowing to the top actionable PRs, at most 5 PRs, and only if GraphQL remaining is above 1000. If remaining is 1000 or less, do not query review threads; report that review-thread state was skipped due to low GraphQL budget.
+
+Recheck current status every run instead of relying on earlier summaries. After discovery, summarize only relevant and actionable PRs ordered by urgency.
+
+Split the output into exactly two sections: `actionable by agents` and `actionable for me`. Put PRs suitable for isolated subagent/worktree execution in `actionable by agents`. Put PRs needing human action such as merge, request review, reply to reviewer, approval, or close/keep-alive decisions in `actionable for me`.
+
+Present each section as a short list, not a table.
+
+For each relevant PR, format the entry in exactly three lines, as normal markdown text and not as inline code:
+1. Repo | PR #number title | status
+2. description: ...
+3. chat: ... | worktree: yes/no | confidence: high|medium|low
+
+Formatting details for line 1:
+- `Repo` must be the repository as a markdown link to the repo homepage.
+- Include both PR number and title.
+- `status` must compactly include: AI PR review status if known, mergeable or mergeable_state, unresolved review thread count if safely checked, and any especially important blocker such as failing checks, requested changes, merge conflicts, stale inactivity, or ready-to-merge state.
+- Do not wrap the whole line or the status text in backticks.
+
+Formatting details for line 2:
+- Use the PR body summary or description, not a new `what should be done` sentence.
+- Keep it to one line starting with exactly `description:`.
+- Do not wrap the description line in backticks.
+- If the PR body is weak or missing, infer a concise description from title plus changed files and say so conservatively.
+
+Formatting details for line 3:
+- `chat` should be a markdown link to the most relevant local Claude/Codex transcript path if found, otherwise `chat: none found`.
+- Use a short label such as `[chat](/absolute/path/to/session.jsonl)` instead of printing a raw path.
+- `worktree` stays `yes` or `no`.
+- Spell `confidence` correctly as `confidence`.
+- Do not wrap the line in backticks.
+
+Do not add extra per-PR lines beyond those three. You may still order PRs by urgency within each section.
+
+Transcript lookup must stay narrow: check only the usual local stores such as `~/.claude/projects` and `~/.codex/archived_sessions` for the top actionable PRs, include only concrete paths actually found, and do not spend long on transcript archaeology.
+
+Do not start fixing during the radar pass. If the user later chooses PRs, use a fresh worktree from `master`.
+
+End with a recommended numbered list of 1-4 items so the user can reply with selections like `approve 1,4,5` or `approve all`. If there are no matching open PRs, open a very short inbox item saying there is nothing to act on today."""
+status = "ACTIVE"
+rrule = "FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=8;BYMINUTE=30"
+model = "gpt-5.4-mini"
+reasoning_effort = "medium"
+execution_environment = "local"
+cwds = ["${workspace}"]

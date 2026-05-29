@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "name": "vltansky/automations/morning-pr-radar",
+  "version": "0.1.0",
+  "title": "Morning PR Radar",
+  "description": "Portable Codex automation package for Morning PR Radar.",
+  "codex": {
+    "automationKinds": [
+      "cron"
+    ]
+  },
+  "inputs": [
+    {
+      "name": "workspace",
+      "type": "path",
+      "mapsTo": "cwds[0]",
+      "required": true,
+      "defaultHint": "/Users/vladta/Projects/vlad"
+    }
+  ],
+  "install": {
+    "suggestedId": "morning-pr-radar",
+    "includeMemory": false,
+    "defaultStatus": "PAUSED"
+  },
+  "source": {
+    "type": "git",
+    "url": "https://github.com/vltansky/automations",
+    "path": "automations/morning-pr-radar"
+  }
+}
