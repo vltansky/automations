@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "name": "vltansky/automations/repo-health-check",
+  "version": "0.1.0",
+  "title": "Repo Health Check",
+  "description": "Portable Codex automation package for a weekly read-only repository health summary.",
+  "codex": {
+    "automationKinds": [
+      "cron"
+    ]
+  },
+  "inputs": [
+    {
+      "name": "workspace",
+      "type": "path",
+      "mapsTo": "cwds[0]",
+      "required": true,
+      "defaultHint": "/Users/example/Projects/my-repo"
+    }
+  ],
+  "install": {
+    "suggestedId": "repo-health-check",
+    "includeMemory": false,
+    "defaultStatus": "PAUSED"
+  },
+  "source": {
+    "type": "git",
+    "url": "https://github.com/vltansky/automations",
+    "path": "automations/repo-health-check"
+  }
+}

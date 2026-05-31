@@ -1,0 +1,43 @@
+version = 1
+id = "repo-health-check"
+kind = "cron"
+name = "Repo Health Check"
+prompt = """Review the current repository and produce a concise health check.
+
+Stay read-only. Do not edit files, install dependencies, create branches, commit, push, or open pull requests.
+
+Start by identifying the repository name, current branch, and whether the worktree has uncommitted changes. If the directory is not a git repository, say that clearly and continue with any files you can inspect safely.
+
+Check the most relevant project signals available in the workspace:
+- package manager and scripts, such as package.json scripts, Makefile targets, or equivalent local commands.
+- README or contributor instructions.
+- obvious test, lint, build, or CI configuration.
+- recent git status and the latest local commits.
+
+Run only lightweight read-only commands unless the repository clearly advertises a safe health command. Prefer listing available checks over running expensive or destructive commands. If you run a command, include whether it passed or failed.
+
+Return exactly these sections:
+
+1. `snapshot`
+   - Repository and branch.
+   - Worktree state.
+   - Primary stack or package manager if detected.
+
+2. `checks`
+   - Commands or files inspected.
+   - Pass/fail/unknown for lint, tests, build, and CI, as applicable.
+
+3. `risks`
+   - 0-5 concrete risks, stale spots, broken commands, missing docs, or obvious follow-ups.
+   - Keep each item one sentence.
+
+4. `next actions`
+   - 1-3 recommended actions in priority order.
+
+Keep the report short enough to scan in under a minute."""
+status = "ACTIVE"
+rrule = "FREQ=WEEKLY;BYDAY=MO;BYHOUR=9;BYMINUTE=0"
+model = "gpt-5.4-mini"
+reasoning_effort = "medium"
+execution_environment = "local"
+cwds = ["${workspace}"]
